@@ -23,13 +23,14 @@ const views = {
 };
 const modal = document.getElementById('add-modal');
 const form = document.getElementById('add-form');
-const partSelect = document.getElementById('part-select');
+const partsCheckboxesContainer = document.getElementById('parts-checkboxes');
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
     setupNavigation();
     setupForm();
+    renderPartsCheckboxes();
     updateSuspensionStatus();
     renderHistory();
 });
@@ -72,19 +73,34 @@ function switchView(viewName) {
     if (views[viewName]) views[viewName].classList.add('active');
 }
 
-// Modal
-function openModal(partId = null) {
-    // Highlight selected part
-    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
-    if (partId) {
-        const el = document.getElementById(`part-${partId}`);
-        if (el) el.classList.add('selected');
-    }
+// Render Parts Checkboxes
+function renderPartsCheckboxes() {
+    partsCheckboxesContainer.innerHTML = PARTS.map(p => `
+        <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--surface-highlight); border-radius: 8px; cursor: pointer;">
+            <input type="checkbox" name="parts" value="${p.id}" style="width: 18px; height: 18px;">
+            <span style="font-size: 13px;">${p.name}</span>
+        </label>
+    `).join('');
+}
 
-    // Populate Select
-    partSelect.innerHTML = PARTS.map(p =>
-        `<option value="${p.id}" ${partId === p.id ? 'selected' : ''}>${p.name}</option>`
-    ).join('');
+// Modal
+function openModal(partIds = []) {
+    // Highlight selected parts
+    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
+
+    // Clear all checkboxes
+    document.querySelectorAll('input[name="parts"]').forEach(cb => cb.checked = false);
+
+    // If partIds provided, check those boxes and highlight
+    if (partIds.length > 0) {
+        partIds.forEach(partId => {
+            const checkbox = document.querySelector(`input[name="parts"][value="${partId}"]`);
+            if (checkbox) checkbox.checked = true;
+
+            const el = document.getElementById(`part-${partId}`);
+            if (el) el.classList.add('selected');
+        });
+    }
 
     // Set default date
     document.getElementById('date-input').valueAsDate = new Date();
@@ -103,9 +119,20 @@ function setupForm() {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        // Get selected parts
+        const selectedParts = Array.from(document.querySelectorAll('input[name="parts"]:checked'))
+            .map(cb => cb.value);
+
+        if (selectedParts.length === 0) {
+            alert('少なくとも1つのパーツを選択してください。');
+            return;
+        }
+
         const newRecord = {
             id: Date.now().toString(),
-            partId: partSelect.value,
+            partIds: selectedParts,
+            manufacturer: document.getElementById('manufacturer-input').value.trim(),
+            partName: document.getElementById('partname-input').value.trim(),
             date: document.getElementById('date-input').value,
             status: document.querySelector('input[name="status"]:checked').value,
             cost: parseInt(document.getElementById('cost-input').value) || 0,
@@ -128,18 +155,20 @@ function updateSuspensionStatus() {
 
     // Find latest status for each part
     const latestStatus = {};
-    // Records are sorted new -> old, so we just take the first one we see for each part
     records.forEach(r => {
-        if (!latestStatus[r.partId]) {
-            latestStatus[r.partId] = r.status;
-        }
+        // Handle both old (partId) and new (partIds) format
+        const parts = r.partIds || [r.partId];
+        parts.forEach(partId => {
+            if (!latestStatus[partId]) {
+                latestStatus[partId] = r.status;
+            }
+        });
     });
 
     // Apply classes
     Object.entries(latestStatus).forEach(([partId, status]) => {
         const el = document.getElementById(`part-${partId}`);
         if (el) {
-            // Remove old classes
             el.setAttribute('class', `part status-${status}`);
         }
     });
@@ -154,11 +183,26 @@ function renderHistory() {
     }
 
     list.innerHTML = records.map(r => {
-        const partName = PARTS.find(p => p.id === r.partId)?.name || r.partId;
+        // Handle both old and new format
+        const parts = r.partIds || [r.partId];
+        const partNames = parts.map(id => PARTS.find(p => p.id === id)?.name || id).join(', ');
+
+        // Build display name
+        let displayName = '';
+        if (r.partName) {
+            displayName = r.partName;
+        } else {
+            displayName = partNames;
+        }
+
+        if (r.manufacturer) {
+            displayName += ` (${r.manufacturer})`;
+        }
+
         return `
         <div class="list-item">
             <div>
-                <div style="font-weight:600; margin-bottom:4px;">${partName}</div>
+                <div style="font-weight:600; margin-bottom:4px;">${displayName}</div>
                 <div style="font-size:12px; color:var(--text-secondary)">${r.date} • ¥${r.cost.toLocaleString()}</div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
@@ -178,5 +222,5 @@ function renderHistory() {
 
 // Expose openModal for SVG clicks
 window.handlePartClick = (partId) => {
-    openModal(partId);
+    openModal([partId]);
 };

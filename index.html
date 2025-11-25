@@ -11,7 +11,6 @@
     <title>JZX100 Log</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -29,9 +28,7 @@
                 <div style="text-align:center; width:100%;">
                     <h3 style="margin:0 0 10px 0; color:var(--text-secondary); font-size:12px;">フロント サスペンション</h3>
                     <svg viewBox="0 0 300 200" class="car-outline">
-                        <!-- Center Line -->
                         <line x1="150" y1="0" x2="150" y2="200" stroke="#333" stroke-dasharray="4" />
-                        <!-- LEFT SIDE (User's Left) -->
                         <g transform="translate(0,0)">
                             <g id="part-f-coil" onclick="handlePartClick('f-coil')" class="part status-unknown">
                                 <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
@@ -54,7 +51,6 @@
                                 <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
                             </g>
                         </g>
-                        <!-- RIGHT SIDE (Mirrored) -->
                         <g transform="translate(300,0) scale(-1,1)">
                             <g class="part status-unknown" onclick="handlePartClick('f-coil')">
                                 <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
@@ -85,7 +81,6 @@
                     <h3 style="margin:0 0 10px 0; color:var(--text-secondary); font-size:12px;">リア サスペンション</h3>
                     <svg viewBox="0 0 300 200" class="car-outline">
                         <line x1="150" y1="0" x2="150" y2="200" stroke="#333" stroke-dasharray="4" />
-                        <!-- LEFT SIDE -->
                         <g transform="translate(0,0)">
                             <g id="part-r-coil" onclick="handlePartClick('r-coil')" class="part status-unknown">
                                 <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
@@ -106,7 +101,6 @@
                                 <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
                             </g>
                         </g>
-                        <!-- RIGHT SIDE -->
                         <g transform="translate(300,0) scale(-1,1)">
                             <g class="part status-unknown" onclick="handlePartClick('r-coil')">
                                 <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
@@ -130,7 +124,6 @@
                     </svg>
                 </div>
             </div>
-            <!-- Floating Action Button -->
             <button id="fab-add" class="btn btn-primary"
                 style="position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 0;">
                 <i data-lucide="plus"></i>
@@ -140,9 +133,7 @@
         <!-- HISTORY VIEW -->
         <div id="view-history" class="view">
             <h2 style="margin-top:0;">整備履歴</h2>
-            <div id="history-list">
-                <!-- Items injected by JS -->
-            </div>
+            <div id="history-list"></div>
         </div>
 
         <!-- SETTINGS VIEW -->
@@ -185,10 +176,21 @@
 
             <form id="add-form">
                 <div class="form-group">
-                    <label>パーツ</label>
-                    <select id="part-select" required>
-                        <!-- Options injected by JS -->
-                    </select>
+                    <label>パーツ選択</label>
+                    <div id="parts-checkboxes"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 200px; overflow-y: auto;">
+                        <!-- Checkboxes injected by JS -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>メーカー名</label>
+                    <input type="text" id="manufacturer-input" placeholder="例: TEIN, HKS, CUSCO">
+                </div>
+
+                <div class="form-group">
+                    <label>パーツ名（任意）</label>
+                    <input type="text" id="partname-input" placeholder="カスタムパーツ名">
                 </div>
 
                 <div class="form-group">
@@ -225,7 +227,7 @@
 
                 <div class="form-group">
                     <label>メモ</label>
-                    <textarea id="note-input" rows="3" placeholder="メーカー、仕様など..."></textarea>
+                    <textarea id="note-input" rows="3" placeholder="備考など..."></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">保存</button>
