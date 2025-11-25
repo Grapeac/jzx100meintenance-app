@@ -1,0 +1,21 @@
+{
+  "name": "JZX100 Log",
+  "short_name": "JZX100",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f12",
+  "theme_color": "#0f0f12",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/222/FFF.png?text=JZX",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://placehold.co/512x512/222/FFF.png?text=JZX",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
