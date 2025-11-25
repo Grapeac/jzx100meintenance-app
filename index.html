@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
@@ -11,8 +11,232 @@
     <title>JZX100 Log</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    lucide.createIcons();
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <header>
+        <h1>JZX100 整備記録</h1>
+        <div id="total-cost" style="font-size:14px; color:var(--accent-color); font-weight:600;">¥0</div>
+    </header>
+
+    <div class="app-container">
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="view active">
+            <div class="suspension-container">
+                <!-- Front Suspension -->
+                <div style="text-align:center; width:100%;">
+                    <h3 style="margin:0 0 10px 0; color:var(--text-secondary); font-size:12px;">フロント サスペンション</h3>
+                    <svg viewBox="0 0 300 200" class="car-outline">
+                        <!-- Center Line -->
+                        <line x1="150" y1="0" x2="150" y2="200" stroke="#333" stroke-dasharray="4" />
+                        <!-- LEFT SIDE (User's Left) -->
+                        <g transform="translate(0,0)">
+                            <g id="part-f-coil" onclick="handlePartClick('f-coil')" class="part status-unknown">
+                                <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
+                                <path d="M50 50 L70 60 L50 70 L70 80 L50 90 L70 100" fill="none" stroke="currentColor"
+                                    stroke-width="2" opacity="0.5" />
+                            </g>
+                            <g id="part-f-upper" onclick="handlePartClick('f-upper')" class="part status-unknown">
+                                <path d="M30 40 L90 40 L60 60 Z" stroke-width="2" />
+                            </g>
+                            <g id="part-f-lower" onclick="handlePartClick('f-lower')" class="part status-unknown">
+                                <path d="M30 140 L90 140 L60 110 Z" stroke-width="2" />
+                            </g>
+                            <g id="part-f-knuckle" onclick="handlePartClick('f-knuckle')" class="part status-unknown">
+                                <rect x="55" y="60" width="10" height="60" rx="2" stroke-width="2" />
+                            </g>
+                            <g id="part-f-tension" onclick="handlePartClick('f-tension')" class="part status-unknown">
+                                <line x1="60" y1="130" x2="100" y2="180" stroke-width="4" stroke-linecap="round" />
+                            </g>
+                            <g id="part-f-stab" onclick="handlePartClick('f-stab')" class="part status-unknown">
+                                <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
+                            </g>
+                        </g>
+                        <!-- RIGHT SIDE (Mirrored) -->
+                        <g transform="translate(300,0) scale(-1,1)">
+                            <g class="part status-unknown" onclick="handlePartClick('f-coil')">
+                                <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
+                                <path d="M50 50 L70 60 L50 70 L70 80 L50 90 L70 100" fill="none" stroke="currentColor"
+                                    stroke-width="2" opacity="0.5" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('f-upper')">
+                                <path d="M30 40 L90 40 L60 60 Z" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('f-lower')">
+                                <path d="M30 140 L90 140 L60 110 Z" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('f-knuckle')">
+                                <rect x="55" y="60" width="10" height="60" rx="2" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('f-tension')">
+                                <line x1="60" y1="130" x2="100" y2="180" stroke-width="4" stroke-linecap="round" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('f-stab')">
+                                <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Rear Suspension -->
+                <div style="text-align:center; width:100%; margin-top:20px;">
+                    <h3 style="margin:0 0 10px 0; color:var(--text-secondary); font-size:12px;">リア サスペンション</h3>
+                    <svg viewBox="0 0 300 200" class="car-outline">
+                        <line x1="150" y1="0" x2="150" y2="200" stroke="#333" stroke-dasharray="4" />
+                        <!-- LEFT SIDE -->
+                        <g transform="translate(0,0)">
+                            <g id="part-r-coil" onclick="handlePartClick('r-coil')" class="part status-unknown">
+                                <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
+                            </g>
+                            <g id="part-r-upper" onclick="handlePartClick('r-upper')" class="part status-unknown">
+                                <path d="M30 40 L90 40 L60 60 Z" stroke-width="2" />
+                            </g>
+                            <g id="part-r-lower" onclick="handlePartClick('r-lower')" class="part status-unknown">
+                                <path d="M30 140 L90 140 L60 110 Z" stroke-width="2" />
+                            </g>
+                            <g id="part-r-knuckle" onclick="handlePartClick('r-knuckle')" class="part status-unknown">
+                                <rect x="55" y="60" width="10" height="60" rx="2" stroke-width="2" />
+                            </g>
+                            <g id="part-r-traction" onclick="handlePartClick('r-traction')" class="part status-unknown">
+                                <line x1="60" y1="130" x2="100" y2="80" stroke-width="4" stroke-linecap="round" />
+                            </g>
+                            <g id="part-r-stab" onclick="handlePartClick('r-stab')" class="part status-unknown">
+                                <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
+                            </g>
+                        </g>
+                        <!-- RIGHT SIDE -->
+                        <g transform="translate(300,0) scale(-1,1)">
+                            <g class="part status-unknown" onclick="handlePartClick('r-coil')">
+                                <rect x="50" y="40" width="20" height="100" rx="4" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('r-upper')">
+                                <path d="M30 40 L90 40 L60 60 Z" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('r-lower')">
+                                <path d="M30 140 L90 140 L60 110 Z" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('r-knuckle')">
+                                <rect x="55" y="60" width="10" height="60" rx="2" stroke-width="2" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('r-traction')">
+                                <line x1="60" y1="130" x2="100" y2="80" stroke-width="4" stroke-linecap="round" />
+                            </g>
+                            <g class="part status-unknown" onclick="handlePartClick('r-stab')">
+                                <line x1="40" y1="130" x2="40" y2="100" stroke-width="3" stroke-linecap="round" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <!-- Floating Action Button -->
+            <button id="fab-add" class="btn btn-primary"
+                style="position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 0;">
+                <i data-lucide="plus"></i>
+            </button>
+        </div>
+
+        <!-- HISTORY VIEW -->
+        <div id="view-history" class="view">
+            <h2 style="margin-top:0;">整備履歴</h2>
+            <div id="history-list">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="view-settings" class="view">
+            <h2>設定</h2>
+            <div class="card">
+                <p style="color:var(--text-secondary)">データはこの端末に保存されます。</p>
+                <button class="btn btn-secondary" onclick="localStorage.clear(); location.reload();"
+                    style="color:var(--danger-color)">全データをリセット</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="tab-bar">
+        <div class="tab-item active" data-target="dashboard">
+            <i data-lucide="car-front" class="tab-icon"></i>
+            <span>ガレージ</span>
+        </div>
+        <div class="tab-item" data-target="history">
+            <i data-lucide="clipboard-list" class="tab-icon"></i>
+            <span>履歴</span>
+        </div>
+        <div class="tab-item" data-target="settings">
+            <i data-lucide="settings" class="tab-icon"></i>
+            <span>設定</span>
+        </div>
+    </nav>
+
+    <!-- ADD RECORD MODAL -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0;">記録を追加</h2>
+                <button id="close-modal"
+                    style="background:none; border:none; color:var(--text-secondary); padding:8px;">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="add-form">
+                <div class="form-group">
+                    <label>パーツ</label>
+                    <select id="part-select" required>
+                        <!-- Options injected by JS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>状態</label>
+                    <div style="display:flex; gap:10px;">
+                        <label style="flex:1; cursor:pointer;">
+                            <input type="radio" name="status" value="good" checked style="display:none">
+                            <div class="btn btn-secondary"
+                                style="border:2px solid var(--success-color); color:var(--success-color);">良好</div>
+                        </label>
+                        <label style="flex:1; cursor:pointer;">
+                            <input type="radio" name="status" value="check" style="display:none">
+                            <div class="btn btn-secondary"
+                                style="border:2px solid var(--warning-color); color:var(--warning-color);">要確認</div>
+                        </label>
+                        <label style="flex:1; cursor:pointer;">
+                            <input type="radio" name="status" value="replace" style="display:none">
+                            <div class="btn btn-secondary"
+                                style="border:2px solid var(--danger-color); color:var(--danger-color);">要交換</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>日付</label>
+                        <input type="date" id="date-input" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>費用 (¥)</label>
+                        <input type="number" id="cost-input" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>メモ</label>
+                    <textarea id="note-input" rows="3" placeholder="メーカー、仕様など..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
     </script>
-    </body>
+</body>
 
 </html>
