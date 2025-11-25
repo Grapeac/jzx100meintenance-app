@@ -76,11 +76,25 @@ function switchView(viewName) {
 // Render Parts Checkboxes
 function renderPartsCheckboxes() {
     partsCheckboxesContainer.innerHTML = PARTS.map(p => `
-        <label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--surface-highlight); border-radius: 8px; cursor: pointer;">
-            <input type="checkbox" name="parts" value="${p.id}" style="width: 18px; height: 18px;">
-            <span style="font-size: 13px;">${p.name}</span>
+        <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--surface-highlight); border-radius: 8px; cursor: pointer; user-select: none; -webkit-user-select: none;">
+            <input type="checkbox" name="parts" value="${p.id}" style="width: 20px; height: 20px; cursor: pointer; flex-shrink: 0;">
+            <span style="font-size: 14px; flex: 1;">${p.name}</span>
         </label>
     `).join('');
+
+    // Add click handlers to labels for better mobile support
+    partsCheckboxesContainer.querySelectorAll('label').forEach(label => {
+        label.addEventListener('click', (e) => {
+            // If clicking on the label (not the checkbox itself), toggle the checkbox
+            if (e.target.tagName === 'LABEL' || e.target.tagName === 'SPAN') {
+                const checkbox = label.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    e.preventDefault();
+                }
+            }
+        });
+    });
 }
 
 // Modal
