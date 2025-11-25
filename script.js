@@ -1,18 +1,18 @@
 // State
 let records = [];
 const PARTS = [
-    { id: 'f-upper', name: 'Front Upper Arm' },
-    { id: 'f-lower', name: 'Front Lower Arm' },
-    { id: 'f-knuckle', name: 'Front Knuckle' },
-    { id: 'f-tension', name: 'Front Tension Rod' },
-    { id: 'f-coil', name: 'Front Coilover' },
-    { id: 'f-stab', name: 'Front Stabilizer Link' },
-    { id: 'r-upper', name: 'Rear Upper Arm' },
-    { id: 'r-lower', name: 'Rear Lower Arm' },
-    { id: 'r-knuckle', name: 'Rear Knuckle' },
-    { id: 'r-traction', name: 'Rear Traction Rod' },
-    { id: 'r-coil', name: 'Rear Coilover' },
-    { id: 'r-stab', name: 'Rear Stabilizer Link' }
+    { id: 'f-upper', name: 'フロント アッパーアーム' },
+    { id: 'f-lower', name: 'フロント ロアアーム' },
+    { id: 'f-knuckle', name: 'フロント ナックル' },
+    { id: 'f-tension', name: 'フロント テンションロッド' },
+    { id: 'f-coil', name: 'フロント 車高調' },
+    { id: 'f-stab', name: 'フロント スタビリンク' },
+    { id: 'r-upper', name: 'リア アッパーアーム' },
+    { id: 'r-lower', name: 'リア ロアアーム' },
+    { id: 'r-knuckle', name: 'リア ナックル' },
+    { id: 'r-traction', name: 'リア トラクションロッド' },
+    { id: 'r-coil', name: 'リア 車高調' },
+    { id: 'r-stab', name: 'リア スタビリンク' }
 ];
 
 // DOM Elements
@@ -74,19 +74,27 @@ function switchView(viewName) {
 
 // Modal
 function openModal(partId = null) {
+    // Highlight selected part
+    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
+    if (partId) {
+        const el = document.getElementById(`part-${partId}`);
+        if (el) el.classList.add('selected');
+    }
+
     // Populate Select
-    partSelect.innerHTML = PARTS.map(p => 
+    partSelect.innerHTML = PARTS.map(p =>
         `<option value="${p.id}" ${partId === p.id ? 'selected' : ''}>${p.name}</option>`
     ).join('');
-    
+
     // Set default date
     document.getElementById('date-input').valueAsDate = new Date();
-    
+
     modal.classList.add('open');
 }
 
 function closeModal() {
     modal.classList.remove('open');
+    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
     form.reset();
 }
 
@@ -94,7 +102,7 @@ function closeModal() {
 function setupForm() {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const newRecord = {
             id: Date.now().toString(),
             partId: partSelect.value,
@@ -141,7 +149,7 @@ function updateSuspensionStatus() {
 function renderHistory() {
     const list = document.getElementById('history-list');
     if (!records.length) {
-        list.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-secondary)">No records yet.</div>';
+        list.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-secondary)">記録がありません。</div>';
         return;
     }
 
@@ -162,7 +170,7 @@ function renderHistory() {
         </div>
         `;
     }).join('');
-    
+
     // Update Total Cost
     const total = records.reduce((sum, r) => sum + r.cost, 0);
     document.getElementById('total-cost').textContent = `¥${total.toLocaleString()}`;

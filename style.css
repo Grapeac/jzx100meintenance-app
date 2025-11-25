@@ -100,10 +100,32 @@ h1 {
 }
 
 /* Status Colors */
-.status-good { fill: var(--success-color); stroke: var(--success-color); }
-.status-check { fill: var(--warning-color); stroke: var(--warning-color); }
-.status-replace { fill: var(--danger-color); stroke: var(--danger-color); }
-.status-unknown { fill: var(--surface-highlight); stroke: var(--text-secondary); }
+.status-good {
+    fill: var(--success-color);
+    stroke: var(--success-color);
+}
+
+.status-check {
+    fill: var(--warning-color);
+    stroke: var(--warning-color);
+}
+
+.status-replace {
+    fill: var(--danger-color);
+    stroke: var(--danger-color);
+}
+
+.status-unknown {
+    fill: var(--surface-highlight);
+    stroke: var(--text-secondary);
+}
+
+.part.selected {
+    filter: drop-shadow(0 0 8px var(--accent-color)) brightness(1.5);
+    stroke: var(--accent-color);
+    stroke-width: 3px;
+    z-index: 10;
+}
 
 /* Cards & Lists */
 .card {
@@ -122,8 +144,16 @@ h1 {
     border-bottom: 1px solid var(--border-color);
 }
 
-.list-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
-.list-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-bottom: none; }
+.list-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.list-item:last-child {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom: none;
+}
 
 /* Forms */
 .form-group {
@@ -139,7 +169,9 @@ label {
     letter-spacing: 0.5px;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
@@ -150,7 +182,9 @@ input, select, textarea {
     appearance: none;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--accent-color);
 }
@@ -224,7 +258,7 @@ input:focus, select:focus, textarea:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 100;
     display: flex;
     align-items: flex-end;
