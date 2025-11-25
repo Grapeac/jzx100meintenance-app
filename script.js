@@ -111,6 +111,11 @@ function openModal(partIds = []) {
             const checkbox = document.querySelector(`input[name="parts"][value="${partId}"]`);
             if (checkbox) checkbox.checked = true;
 
+            // Highlight all parts with this partId (both left and right)
+            document.querySelectorAll(`.part[onclick*="${partId}"]`).forEach(el => {
+                el.classList.add('selected');
+            });
+            // Also highlight by ID
             const el = document.getElementById(`part-${partId}`);
             if (el) el.classList.add('selected');
         });
@@ -162,9 +167,8 @@ function setupForm() {
 // Logic: Update Graphic
 function updateSuspensionStatus() {
     // Reset all to unknown
-    PARTS.forEach(p => {
-        const el = document.getElementById(`part-${p.id}`);
-        if (el) el.setAttribute('class', 'part status-unknown');
+    document.querySelectorAll('.part').forEach(el => {
+        el.setAttribute('class', 'part status-unknown');
     });
 
     // Find latest status for each part
@@ -179,8 +183,13 @@ function updateSuspensionStatus() {
         });
     });
 
-    // Apply classes
+    // Apply classes to all parts (both left and right sides)
     Object.entries(latestStatus).forEach(([partId, status]) => {
+        // Query all elements with onclick containing this partId
+        document.querySelectorAll(`.part[onclick*="${partId}"]`).forEach(el => {
+            el.setAttribute('class', `part status-${status}`);
+        });
+        // Also update by ID for left side
         const el = document.getElementById(`part-${partId}`);
         if (el) {
             el.setAttribute('class', `part status-${status}`);
