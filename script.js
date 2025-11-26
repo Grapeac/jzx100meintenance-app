@@ -1,27 +1,44 @@
 // State
 let records = [];
 const PARTS = [
-    { id: 'f-upper', name: 'フロント アッパーアーム' },
-    { id: 'f-lower', name: 'フロント ロアアーム' },
-    { id: 'f-knuckle', name: 'フロント ナックル' },
-    { id: 'f-tension', name: 'フロント テンションロッド' },
-    { id: 'f-coil', name: 'フロント 車高調' },
-    { id: 'f-stab', name: 'フロント スタビリンク' },
-    { id: 'r-upper', name: 'リア アッパーアーム' },
-    { id: 'r-lower', name: 'リア ロアアーム' },
-    { id: 'r-knuckle', name: 'リア ナックル' },
-    { id: 'r-traction', name: 'リア トラクションロッド' },
-    { id: 'r-coil', name: 'リア 車高調' },
-    { id: 'r-stab', name: 'リア スタビリンク' }
+    // Front Left
+    { id: 'fl-upper', name: 'FL アッパーアーム', group: 'Front Left' },
+    { id: 'fl-lower', name: 'FL ロアアーム', group: 'Front Left' },
+    { id: 'fl-knuckle', name: 'FL ナックル', group: 'Front Left' },
+    { id: 'fl-tension', name: 'FL テンションロッド', group: 'Front Left' },
+    { id: 'fl-coil', name: 'FL 車高調', group: 'Front Left' },
+    { id: 'fl-stab', name: 'FL スタビリンク', group: 'Front Left' },
+    // Front Right
+    { id: 'fr-upper', name: 'FR アッパーアーム', group: 'Front Right' },
+    { id: 'fr-lower', name: 'FR ロアアーム', group: 'Front Right' },
+    { id: 'fr-knuckle', name: 'FR ナックル', group: 'Front Right' },
+    { id: 'fr-tension', name: 'FR テンションロッド', group: 'Front Right' },
+    { id: 'fr-coil', name: 'FR 車高調', group: 'Front Right' },
+    { id: 'fr-stab', name: 'FR スタビリンク', group: 'Front Right' },
+    // Rear Left
+    { id: 'rl-upper', name: 'RL アッパーアーム', group: 'Rear Left' },
+    { id: 'rl-lower', name: 'RL ロアアーム', group: 'Rear Left' },
+    { id: 'rl-knuckle', name: 'RL ナックル', group: 'Rear Left' },
+    { id: 'rl-traction', name: 'RL トラクションロッド', group: 'Rear Left' },
+    { id: 'rl-coil', name: 'RL 車高調', group: 'Rear Left' },
+    { id: 'rl-stab', name: 'RL スタビリンク', group: 'Rear Left' },
+    // Rear Right
+    { id: 'rr-upper', name: 'RR アッパーアーム', group: 'Rear Right' },
+    { id: 'rr-lower', name: 'RR ロアアーム', group: 'Rear Right' },
+    { id: 'rr-knuckle', name: 'RR ナックル', group: 'Rear Right' },
+    { id: 'rr-traction', name: 'RR トラクションロッド', group: 'Rear Right' },
+    { id: 'rr-coil', name: 'RR 車高調', group: 'Rear Right' },
+    { id: 'rr-stab', name: 'RR スタビリンク', group: 'Rear Right' }
 ];
 
 // DOM Elements
 const views = {
     dashboard: document.getElementById('view-dashboard'),
+    add: document.getElementById('view-add'),
     history: document.getElementById('view-history'),
     settings: document.getElementById('view-settings')
 };
-const modal = document.getElementById('add-modal');
+const detailsModal = document.getElementById('details-modal');
 const form = document.getElementById('add-form');
 const partsCheckboxesContainer = document.getElementById('parts-checkboxes');
 
@@ -40,10 +57,14 @@ function loadData() {
     const saved = localStorage.getItem('jzx100_logs');
     if (saved) {
         records = JSON.parse(saved);
+        // Sort by date desc
+        records.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 }
 
 function saveData() {
+    // Sort by date desc before saving
+    records.sort((a, b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('jzx100_logs', JSON.stringify(records));
     updateSuspensionStatus();
     renderHistory();
@@ -58,9 +79,10 @@ function setupNavigation() {
         });
     });
 
-    // Modal Triggers
-    document.getElementById('fab-add').addEventListener('click', () => openModal());
-    document.getElementById('close-modal').addEventListener('click', () => closeModal());
+    // Details Modal
+    document.getElementById('close-details-modal').addEventListener('click', () => {
+        detailsModal.classList.remove('open');
+    });
 }
 
 function switchView(viewName) {
@@ -75,66 +97,116 @@ function switchView(viewName) {
 
 // Render Parts Checkboxes
 function renderPartsCheckboxes() {
-    partsCheckboxesContainer.innerHTML = PARTS.map(p => `
-        <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--surface-highlight); border-radius: 8px; cursor: pointer; user-select: none; -webkit-user-select: none;">
-            <input type="checkbox" name="parts" value="${p.id}" style="width: 20px; height: 20px; cursor: pointer; flex-shrink: 0;">
-            <span style="font-size: 14px; flex: 1;">${p.name}</span>
-        </label>
-    `).join('');
+    const groups = {
+        'Front Left': [],
+        'Front Right': [],
+        'Rear Left': [],
+        'Rear Right': []
+    };
 
-    // Add click handlers to labels for better mobile support
-    partsCheckboxesContainer.querySelectorAll('label').forEach(label => {
-        label.addEventListener('click', (e) => {
-            // If clicking on the label (not the checkbox itself), toggle the checkbox
-            if (e.target.tagName === 'LABEL' || e.target.tagName === 'SPAN') {
-                const checkbox = label.querySelector('input[type="checkbox"]');
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    e.preventDefault();
-                }
-            }
-        });
+    PARTS.forEach(p => {
+        if (groups[p.group]) {
+            groups[p.group].push(p);
+        }
     });
+
+    let html = '';
+    for (const [groupName, parts] of Object.entries(groups)) {
+        html += `
+            <div class="parts-group">
+                <div class="parts-group-title">${groupName}</div>
+                <div class="parts-grid">
+                    ${parts.map(p => `
+                        <label class="part-checkbox-item">
+                            <input type="checkbox" name="parts" value="${p.id}">
+                            <span>${p.name.split(' ').slice(1).join(' ')}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    partsCheckboxesContainer.innerHTML = html;
 }
 
-// Modal
-function openModal(partIds = []) {
-    // Highlight selected parts
-    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
+// Garage Interaction (Read Only)
+function showPartDetails(partId) {
+    const part = PARTS.find(p => p.id === partId);
+    if (!part) return;
 
-    // Clear all checkboxes
-    document.querySelectorAll('input[name="parts"]').forEach(cb => cb.checked = false);
-
-    // If partIds provided, check those boxes and highlight
-    if (partIds.length > 0) {
-        partIds.forEach(partId => {
-            const checkbox = document.querySelector(`input[name="parts"][value="${partId}"]`);
-            if (checkbox) checkbox.checked = true;
-
-            // Highlight all parts with this partId (both left and right)
-            document.querySelectorAll(`.part[onclick*="${partId}"]`).forEach(el => {
-                el.classList.add('selected');
-            });
-            // Also highlight by ID
-            const el = document.getElementById(`part-${partId}`);
-            if (el) el.classList.add('selected');
-        });
+    // Find latest record for this part
+    let latestRecord = null;
+    // Search backwards
+    for (let i = 0; i < records.length; i++) {
+        const r = records[i];
+        const parts = r.partIds || [r.partId];
+        if (parts.includes(partId)) {
+            latestRecord = r;
+            break;
+        }
     }
 
-    // Set default date
-    document.getElementById('date-input').valueAsDate = new Date();
+    const titleEl = document.getElementById('details-title');
+    const contentEl = document.getElementById('details-content');
 
-    modal.classList.add('open');
-}
+    titleEl.textContent = part.name;
 
-function closeModal() {
-    modal.classList.remove('open');
-    document.querySelectorAll('.part').forEach(el => el.classList.remove('selected'));
-    form.reset();
+    if (latestRecord) {
+        const statusText = latestRecord.status === 'good' ? '良好' :
+            latestRecord.status === 'check' ? '要確認' : '要交換';
+        const statusColor = latestRecord.status === 'good' ? 'var(--success-color)' :
+            latestRecord.status === 'check' ? 'var(--warning-color)' : 'var(--danger-color)';
+
+        contentEl.innerHTML = `
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">状態</div>
+                <div style="font-size: 18px; font-weight: 600; color: ${statusColor};">${statusText}</div>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">最終更新日</div>
+                <div style="font-size: 16px;">${latestRecord.date}</div>
+            </div>
+            ${latestRecord.manufacturer ? `
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">メーカー</div>
+                <div style="font-size: 16px;">${latestRecord.manufacturer}</div>
+            </div>` : ''}
+            ${latestRecord.partName ? `
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">パーツ名</div>
+                <div style="font-size: 16px;">${latestRecord.partName}</div>
+            </div>` : ''}
+            ${latestRecord.note ? `
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">メモ</div>
+                <div style="font-size: 16px; white-space: pre-wrap;">${latestRecord.note}</div>
+            </div>` : ''}
+             <div style="margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">費用</div>
+                <div style="font-size: 16px;">¥${latestRecord.cost.toLocaleString()}</div>
+            </div>
+        `;
+    } else {
+        contentEl.innerHTML = `
+            <div style="padding: 20px 0; text-align: center; color: var(--text-secondary);">
+                記録がありません
+            </div>
+        `;
+    }
+
+    detailsModal.classList.add('open');
 }
 
 // Form Handling
 function setupForm() {
+    // Set default date
+    // Set default date to today (Local)
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('date-input').value = `${yyyy}-${mm}-${dd}`;
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -160,7 +232,20 @@ function setupForm() {
 
         records.unshift(newRecord); // Add to top
         saveData();
-        closeModal();
+
+        // Reset form
+        form.reset();
+        // Reset form
+        form.reset();
+        // Reset date to today
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('date-input').value = `${yyyy}-${mm}-${dd}`;
+
+        // Switch to history view to show result
+        switchView('history');
     });
 }
 
@@ -173,8 +258,12 @@ function updateSuspensionStatus() {
 
     // Find latest status for each part
     const latestStatus = {};
+    // Iterate backwards (oldest to newest) to let newer records overwrite
+    // Actually records is sorted newest first, so we should iterate in reverse or just use a map that doesn't overwrite if exists
+    // But wait, records is unshift (newest first). So we should iterate from end to start OR just iterate start to end and only set if not set.
+
+    // Let's iterate from newest (index 0) to oldest. First find wins.
     records.forEach(r => {
-        // Handle both old (partId) and new (partIds) format
         const parts = r.partIds || [r.partId];
         parts.forEach(partId => {
             if (!latestStatus[partId]) {
@@ -183,17 +272,10 @@ function updateSuspensionStatus() {
         });
     });
 
-    // Apply classes to all parts (both left and right sides)
+    // Apply classes to all parts
     Object.entries(latestStatus).forEach(([partId, status]) => {
-        // Query all elements with onclick containing this partId
-        document.querySelectorAll(`.part[onclick*="${partId}"]`).forEach(el => {
-            el.setAttribute('class', `part status-${status}`);
-        });
-        // Also update by ID for left side
         const el = document.getElementById(`part-${partId}`);
-        if (el) {
-            el.setAttribute('class', `part status-${status}`);
-        }
+        if (el) el.setAttribute('class', `part status-${status}`);
     });
 }
 
@@ -243,7 +325,7 @@ function renderHistory() {
     document.getElementById('total-cost').textContent = `¥${total.toLocaleString()}`;
 }
 
-// Expose openModal for SVG clicks
+// Expose showPartDetails for SVG clicks
 window.handlePartClick = (partId) => {
-    openModal([partId]);
+    showPartDetails(partId);
 };
